@@ -1,0 +1,12 @@
+## Interface: 16001
+## Title: MeioSpikeCheck
+## Notes: Finds which addon causes frame spikes. /spikes explains how.
+## Category: Meio
+## IconTexture: Interface\Icons\INV_Misc_PocketWatch_02
+## Version: 1.0.0
+## Author: MeioNeiz
+## X-Website: https://github.com/MeioNeiz/MeioSpikeCheck
+## X-License: MIT
+## SavedVariables: MeioSpikeCheckDB
+
+MeioSpikeCheck.lua

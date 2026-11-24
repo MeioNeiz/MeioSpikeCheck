@@ -1,0 +1,16 @@
+{
+  "title": "Meio Spike Check",
+  "summary": "Finds out which addon is behind the stutters and freezes in your game.",
+  "cfCategory": "Development Tools",
+  "cfExtra": [],
+  "wagoCategories": [
+    "Development Tools"
+  ],
+  "gallery": [
+    {
+      "file": "hero.png",
+      "title": "The report",
+      "description": "Long frames printed as they happen, then the report: the whole game, all addons, and the addons with the most long frames"
+    }
+  ]
+}

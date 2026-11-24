@@ -1,0 +1,12 @@
+package-as: MeioSpikeCheck
+
+move-folders:
+  MeioSpikeCheck/addons/MeioSpikeCheck: MeioSpikeCheck
+
+ignore:
+  - docs
+  - README.md
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
