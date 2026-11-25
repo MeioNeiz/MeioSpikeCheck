@@ -7,6 +7,8 @@
 ## Author: MeioNeiz
 ## X-Website: https://github.com/MeioNeiz/MeioSpikeCheck
 ## X-License: MIT
+## X-Curse-Project-ID: 1829464
+## X-Wago-ID: ANz7dV64
 ## SavedVariables: MeioSpikeCheckDB
 
 MeioSpikeCheck.lua
