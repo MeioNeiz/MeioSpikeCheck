@@ -10,7 +10,12 @@
     {
       "file": "hero.png",
       "title": "The report",
-      "description": "Long frames printed as they happen, then the report: the whole game, all addons, and the addons with the most long frames"
+      "description": "The addons with the most long frames, worst first, each with a Turn off button for the next reload"
+    },
+    {
+      "file": "report-chat.png",
+      "title": "In chat",
+      "description": "The same report in chat with /spikes report"
     }
   ]
 }
