@@ -1,5 +1,11 @@
 # Meio Spike Check
 
+## 1.1.1
+
+- Report window: click a column header to sort by it (click again to reverse); your choice
+  is kept
+- Memory column wider, so large growth isn't cut off
+
 ## 1.1.0
 
 - `/spikes` opens a report window: the worst addons first, their worst frame and memory growth

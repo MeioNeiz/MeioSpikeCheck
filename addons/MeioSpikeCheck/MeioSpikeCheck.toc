@@ -3,7 +3,7 @@
 ## Notes: Finds which addon causes stutters, and turns it off for the next reload. /spikes
 ## Category: Meio
 ## IconTexture: Interface\Icons\INV_Misc_PocketWatch_02
-## Version: 1.1.0
+## Version: 1.1.1
 ## Author: MeioNeiz
 ## X-Website: https://github.com/MeioNeiz/MeioSpikeCheck
 ## X-License: MIT

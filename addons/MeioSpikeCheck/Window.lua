@@ -1,16 +1,69 @@
 -- The /spikes window: this run's worst addons, each with a Turn off (from the next
--- /reload) button; after a /reload, the run before it.
+-- /reload) button; after a /reload, the run before it. Headers sort (kept in the SV).
 local _, ns = ...
 
 local W, ROW_H = 560, 22
-local COLS = { { "Addon", 16, 170, "LEFT" }, { "50 ms+", 186, 56, "RIGHT" },
-    { "100 ms+", 246, 60, "RIGHT" }, { "Worst", 310, 60, "RIGHT" },
-    { "Memory", 372, 84, "RIGHT" } }
+local function Col(label, x, w, justify)
+    return { label = label, x = x, w = w, justify = justify }
+end
+local COLS = { Col("Addon", 16, 166, "LEFT"), Col("50 ms+", 182, 56, "RIGHT"),
+    Col("100 ms+", 240, 58, "RIGHT"), Col("Worst", 300, 58, "RIGHT"),
+    Col("Memory", 360, 98, "RIGHT") }
 local GOLD, GREY, RED, GREEN, ORANGE = "|cffffd100", "|cff999999", "|cffff8080",
     "|cff80ff80", "|cffff8040"
 
 local frame, ticker
 local rowNames = {}
+
+-- per column: the value it sorts by; the natural order is biggest first, A to Z for names.
+-- Ties keep the worst-first order, so 100 ms+ in its natural order is the default.
+local SORT_BY = { function(r) return r.name:lower() end, function(r) return r.d50 end,
+    function(r) return r.d100 end, function(r) return r.peak or 0 end,
+    function(r) return r.kb or 0 end }
+local DEFAULT_SORT = 3
+
+local function SortCol()
+    local c = ns.DB().sortCol
+    return SORT_BY[c] and c or DEFAULT_SORT
+end
+
+local function Sorted(rows)
+    local col, rev = SortCol(), ns.DB().sortRev
+    local by, rank, out = SORT_BY[col], {}, {}
+    for i, row in ipairs(rows) do rank[row], out[i] = i, row end
+    local up = col == 1
+    table.sort(out, function(x, y)
+        if rev then x, y = y, x end
+        local a, b = by(x), by(y)
+        if a ~= b then
+            if up then return a < b end
+            return a > b
+        end
+        return rank[x] < rank[y]
+    end)
+    return out
+end
+
+-- the arrow sits on the label's inner side (left of right-aligned numbers)
+local function ShowArrow()
+    local col, rev = SortCol(), ns.DB().sortRev
+    local up = (col == 1) == not rev
+    for j, h in ipairs(frame.header.cols) do
+        local a, fs = h.arrow, h.label
+        a:SetShown(j == col)
+        if j == col then
+            a:ClearAllPoints()
+            if COLS[j].justify == "LEFT" then
+                a:SetPoint("LEFT", fs, "LEFT", fs:GetStringWidth() + 3, 0)
+            else
+                a:SetPoint("RIGHT", fs, "RIGHT", -fs:GetStringWidth() - 3, 0)
+            end
+            local t, b = up and 1 or 0, up and 0 or 1
+            a:SetTexCoord(0, 0.5625, t, b)
+            a.up = up
+        end
+    end
+end
 
 local function Duration(s)
     s = math.floor(s)
@@ -85,13 +138,16 @@ local function Refresh()
     end
 
     local rows = r and r.rows or {}
+    local worst = rows[1] and rows[1].name
+    rows = Sorted(rows)
     frame.header:SetShown(#rows > 0)
+    ShowArrow()
     for i, line in ipairs(frame.rows) do
         local row = rows[i]
         line:SetShown(row ~= nil)
         if row then
             local off = ns.IsOff(row.name)
-            local colour = off and GREY or i == 1 and ORANGE or ""
+            local colour = off and GREY or row.name == worst and ORANGE or ""
             line.cells[1]:SetText(colour .. row.name .. (off and (C_AddOns.IsAddOnLoaded(row.name)
                 and " (off after reload)" or " (off)") or "")
                 .. (colour ~= "" and "|r" or ""))
@@ -161,8 +217,27 @@ local function Create()
     frame.header = CreateFrame("Frame", nil, frame)
     frame.header:SetPoint("TOPLEFT", 0, top)
     frame.header:SetSize(W, ROW_H)
-    for _, c in ipairs(COLS) do
-        Text(frame.header, "GameFontNormalSmall", c[2] + 2, -4, c[3], c[4]):SetText(c[1])
+    frame.header.cols = {}
+    for j, c in ipairs(COLS) do
+        local h = CreateFrame("Button", nil, frame.header)
+        h:SetPoint("TOPLEFT", c.x + 2, 0)
+        h:SetSize(c.w, ROW_H)
+        h:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+        h.label = Text(h, "GameFontNormalSmall", 0, -4, c.w, c.justify)
+        h.label:SetText(c.label)
+        h.arrow = h:CreateTexture(nil, "OVERLAY")
+        h.arrow:SetTexture("Interface\\Buttons\\UI-SortArrow")
+        h.arrow:SetSize(9, 8)
+        h:SetScript("OnClick", function()
+            local db = ns.DB()
+            if SortCol() == j then
+                db.sortRev = not db.sortRev
+            else
+                db.sortCol, db.sortRev = j, false
+            end
+            Refresh()
+        end)
+        frame.header.cols[j] = h
     end
     frame.rows = {}
     for i = 1, ns.TOP_ADDONS do
@@ -177,7 +252,7 @@ local function Create()
         end
         line.cells = {}
         for j, c in ipairs(COLS) do
-            line.cells[j] = Text(line, "GameFontHighlight", c[2] + 2, -4, c[3], c[4])
+            line.cells[j] = Text(line, "GameFontHighlight", c.x + 2, -4, c.w, c.justify)
         end
         line.toggle = Button(line, "Turn off", 76, function()
             ns.SetOff(rowNames[i], not ns.IsOff(rowNames[i]))
