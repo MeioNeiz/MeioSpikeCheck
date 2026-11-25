@@ -138,7 +138,8 @@ end
 local function Report()
     if not base then Workflow() return end
     local lines = {}
-    local function Add(t) lines[#lines + 1] = t Say(t) end
+    -- shown: a coloured copy for chat; lastReport keeps plain text
+    local function Add(t, shown) lines[#lines + 1] = t Say(shown or t) end
     Add(("%d s since start, %d hitches over %d ms seen."):format(GetTime() - base.time,
         #hitches, hitchMs))
     -- counters from a start without the profiler would count from client start
@@ -152,8 +153,9 @@ local function Report()
         if #rows == 0 then Add("No addon had a frame over 10 ms.") end
         for i = 1, math.min(TOP_ADDONS, #rows) do
             local r = rows[i]
-            Add(("  %s: over 10/50/100 ms: %d/%d/%d%s"):format(r.name, r.d10, r.d50, r.d100,
-                r.peak and (", new worst %.0f ms"):format(r.peak) or ""))
+            local row = ("%s: over 10/50/100 ms: %d/%d/%d%s"):format(r.name, r.d10, r.d50,
+                r.d100, r.peak and (", new worst %.0f ms"):format(r.peak) or "")
+            Add("  " .. row, i == 1 and "  |cffff8040" .. row .. "|r" or nil)
         end
     end
     if not now then
