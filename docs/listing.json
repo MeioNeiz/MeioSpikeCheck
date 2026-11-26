@@ -1,6 +1,6 @@
 {
   "title": "Meio Spike Check",
-  "summary": "Finds out which addon is behind the stutters and freezes in your game.",
+  "summary": "Finds which addon causes your stutters and freezes.",
   "cfCategory": "Development Tools",
   "cfExtra": [],
   "wagoCategories": [

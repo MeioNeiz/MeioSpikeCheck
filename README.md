@@ -1,6 +1,6 @@
 # Meio Spike Check
 
-Finds out which addon is behind the stutters and freezes in your game.
+Game stuttering? Meio Spike Check names the addon behind each freeze, worst first.
 
 For WoW Forever.
 
