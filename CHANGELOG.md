@@ -1,5 +1,9 @@
 # Meio Spike Check
 
+## 1.1.2
+
+- Settings labels no longer cut short: "Each hitch in chat", "Threshold (ms)"
+
 ## 1.1.1
 
 - Report window: click a column header to sort by it (click again to reverse); your choice
